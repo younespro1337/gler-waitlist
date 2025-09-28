@@ -1,0 +1,32 @@
+'use client';
+import * as React from 'react';
+import { Backdrop, Box, CircularProgress, Typography } from '@mui/material';
+
+export default function Loading({
+  message = 'Loading... please wait',
+  size = 28,
+  fullScreen = false,
+}: {
+  message?: string;
+  size?: number;
+  fullScreen?: boolean;
+}) {
+  if (fullScreen) {
+    return (
+      <Backdrop open sx={{ zIndex: (t) => t.zIndex.modal + 1 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <CircularProgress size={size} />
+          <Typography variant="body2">{message}</Typography>
+        </Box>
+      </Backdrop>
+    );
+  }
+
+  return (
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, p: 3, justifyContent: 'center' }}>
+      <CircularProgress size={size} />
+      <Typography variant="body2">{message}</Typography>
+    </Box>
+  );
+}
+
