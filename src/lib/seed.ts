@@ -3,7 +3,7 @@ import { ServiceProvider } from './types';
 
 const SERVICE_OFFERINGS = ['Housekeeping','Window Cleaning','Car Valet'] as const;
 const VENDOR_TYPES = ['Independent','Company'] as const;
-const STATUSES = ['Onboarded','Rejected','—'] as const;
+const STATUSES = ['Onboarded','Rejected','Pending'] as const;
 
 export function seedServiceProviders(count = 120): ServiceProvider[] {
   faker.seed(42);
@@ -23,6 +23,7 @@ export function seedServiceProviders(count = 120): ServiceProvider[] {
     };
   });
 }
+
 
 
 

@@ -7,13 +7,11 @@ import { ServiceProvider } from '@/lib/types';
 import FiltersPanel, { defaultFilters, Filters } from '@/components/filters/FiltersPanel';
 // Lazy load the table for faster first paint
 const ServiceProvidersTable = React.lazy(() => import('@/components/table/ServiceProvidersTable'));
-import dayjs from 'dayjs';
-import Loading from '@/components/common/Loading';
 import UserDetailsDialog from '@/components/dialogs/UserDetailsDialog';
 import WaitlistHeader from '@/components/waitlist/WaitlistHeader';
 // Brand now rendered inside FiltersPanel to be part of the sidebar
 
-export default function WaitlistPage() {
+function WaitlistPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   type IndexedRow = ServiceProvider & { signupEpoch: number; emailLower: string; phoneLower: string; postcodeLower: string };
@@ -217,5 +215,13 @@ export default function WaitlistPage() {
         }}
       />
     </Container>
+  );
+}
+
+export default function WaitlistPage() {
+  return (
+    <React.Suspense fallback={null}>
+      <WaitlistPageContent />
+    </React.Suspense>
   );
 }

@@ -1,6 +1,5 @@
 'use client';
 import * as React from 'react';
-import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   AppBar,
@@ -62,7 +61,7 @@ export default function AppHeader() {
     return idx === -1 ? 0 : idx;
   }, [pathname]);
 
-  const handleChange = (_: any, value: number) => {
+  const handleChange = (_event: React.SyntheticEvent, value: number) => {
     const item = navItems[value];
     if (!item) return;
     if (item.href.startsWith('#')) return; // placeholder

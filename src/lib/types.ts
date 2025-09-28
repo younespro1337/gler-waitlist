@@ -1,4 +1,4 @@
-export type RegistrationStatus = 'Onboarded' | 'Rejected' | '—';
+export type RegistrationStatus = 'Onboarded' | 'Rejected' | 'Pending';
 export type VendorType = 'Independent' | 'Company';
 export type ServiceOffering = 'Housekeeping' | 'Window Cleaning' | 'Car Valet';
 

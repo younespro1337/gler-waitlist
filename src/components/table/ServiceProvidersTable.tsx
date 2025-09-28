@@ -1,6 +1,6 @@
 'use client';
 import * as React from 'react';
-import { DataGrid, GridColDef, GridToolbar, GridRowModel } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridToolbar } from '@mui/x-data-grid';
 import { Chip, IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import dayjs from 'dayjs';
@@ -17,8 +17,8 @@ export default function ServiceProvidersTable({ rows, onOpenDetails, loading }:{
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   const phoneRegex = /^[+\d][\d\s().-]{6,}$/;
 
-  const processRowUpdate = (newRow: GridRowModel, oldRow: GridRowModel) => {
-    const updated = { ...oldRow, ...newRow } as ServiceProvider;
+  const processRowUpdate = (newRow: ServiceProvider, oldRow: ServiceProvider): ServiceProvider => {
+    const updated: ServiceProvider = { ...oldRow, ...newRow };
 
     if (!emailRegex.test(updated.email)) {
       console.error('Invalid email format:', updated.email);
@@ -37,16 +37,16 @@ export default function ServiceProvidersTable({ rows, onOpenDetails, loading }:{
     const vendorOptions = ['Independent', 'Company'] as const;
     const offeringOptions = ['Housekeeping', 'Window Cleaning', 'Car Valet'] as const;
     const statusOptions = ['Onboarded', 'Rejected', 'Pending'] as const;
-    if (!vendorOptions.includes(updated.vendorType as any)) throw new Error('Invalid vendor type');
-    if (!offeringOptions.includes(updated.serviceOffering as any)) throw new Error('Invalid offering');
-    if (!statusOptions.includes(updated.status as any)) throw new Error('Invalid status');
+    if (!vendorOptions.includes(updated.vendorType)) throw new Error('Invalid vendor type');
+    if (!offeringOptions.includes(updated.serviceOffering)) throw new Error('Invalid offering');
+    if (!statusOptions.includes(updated.status)) throw new Error('Invalid status');
 
     setData(prev => prev.map(r => (r.id === updated.id ? updated : r)));
     console.log('Row updated', { oldRow, newRow: updated });
     return updated;
   };
 
-  const columns: GridColDef[] = [
+  const columns: GridColDef<ServiceProvider>[] = [
     // Editable: email (with validation)
     { field: 'email', headerName: 'Email', flex: 1, minWidth: 220, editable: true },
     // Editable: phone
@@ -59,13 +59,10 @@ export default function ServiceProvidersTable({ rows, onOpenDetails, loading }:{
     { field: 'serviceOffering', headerName: 'Service Offering', flex: 0.8, minWidth: 160, editable: true, type: 'singleSelect', valueOptions: ['Housekeeping', 'Window Cleaning', 'Car Valet'] },
     // Read-only: signup date
     { field: 'signupDate', headerName: 'Signup Date', flex: 0.5, minWidth: 120,
-      renderCell: (p) => {
-        const v = (p as any)?.row?.signupDate as string | undefined;
-        return v ? dayjs(v).format('DD/MM/YYYY') : '';
-      } },
+      renderCell: ({ row }) => (row.signupDate ? dayjs(row.signupDate).format('DD/MM/YYYY') : '') },
     // Editable: status (single select) but rendered as chip when not editing
     { field: 'status', headerName: 'Status', flex: 0.5, minWidth: 120, editable: true, type: 'singleSelect', valueOptions: ['Onboarded', 'Rejected', 'Pending'],
-      renderCell: p => <Chip size="small" label={p.value} color={statusColor(p.value)} /> },
+      renderCell: ({ row }) => <Chip size="small" label={row.status} color={statusColor(row.status)} /> },
     // Actions column (non-editable)
     { field: 'actions', headerName: 'Actions', width: 90, sortable: false,
       renderCell: (p) => (
@@ -76,7 +73,7 @@ export default function ServiceProvidersTable({ rows, onOpenDetails, loading }:{
   ];
 
   return (
-    <DataGrid
+    <DataGrid<ServiceProvider>
       rows={data}
       columns={columns}
       getRowId={(r)=>r.id}
@@ -86,7 +83,7 @@ export default function ServiceProvidersTable({ rows, onOpenDetails, loading }:{
       checkboxSelection
       editMode="row"
       processRowUpdate={processRowUpdate}
-      onProcessRowUpdateError={(err)=>console.error('Row update error', err)}
+      onProcessRowUpdateError={(err: unknown)=>console.error('Row update error', err)}
       density="compact"
       slots={{ toolbar: GridToolbar }}
       loading={Boolean(loading)}

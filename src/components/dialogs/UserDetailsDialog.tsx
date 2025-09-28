@@ -11,7 +11,6 @@ import {
   Chip,
   Divider,
   Stack,
-  Paper,
   Button,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
