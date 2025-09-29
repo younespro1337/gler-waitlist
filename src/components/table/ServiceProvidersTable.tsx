@@ -5,12 +5,14 @@ import { Chip, IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import dayjs from 'dayjs';
 import { ServiceProvider } from '@/lib/types';
+import CustomGridFooter from '@/components/table/CustomGridFooter';
 
 const statusColor = (s: ServiceProvider['status']) =>
   s === 'Onboarded' ? 'success' : s === 'Rejected' ? 'error' : 'default';
 
 export default function ServiceProvidersTable({ rows, onOpenDetails, loading }:{ rows: ServiceProvider[]; onOpenDetails?: (id: string)=>void; loading?: boolean }) {
   const [data, setData] = React.useState<ServiceProvider[]>(rows);
+  const [paginationModel, setPaginationModel] = React.useState<{ page: number; pageSize: number }>({ page: 0, pageSize: 25 });
 
   React.useEffect(() => { setData(rows); }, [rows]);
 
@@ -72,36 +74,55 @@ export default function ServiceProvidersTable({ rows, onOpenDetails, loading }:{
       ) },
   ];
 
+  // Clamp page when data or pageSize changes to avoid empty pages
+  React.useEffect(() => {
+    const totalPages = Math.max(1, Math.ceil((data.length || 0) / (paginationModel.pageSize || 1)));
+    if (paginationModel.page > totalPages - 1) {
+      setPaginationModel((pm) => ({ ...pm, page: totalPages - 1 }));
+    }
+  }, [data.length, paginationModel.pageSize, paginationModel.page]);
+
+  const autoHeight = paginationModel.pageSize === 10;
+
   return (
-    <DataGrid<ServiceProvider>
-      rows={data}
-      columns={columns}
-      getRowId={(r)=>r.id}
-      pageSizeOptions={[10,25,50]}
-      initialState={{ pagination:{ paginationModel:{ pageSize:10, page:0 } } }}
-      disableRowSelectionOnClick
-      checkboxSelection
-      editMode="row"
-      processRowUpdate={processRowUpdate}
-      onProcessRowUpdateError={(err: unknown)=>console.error('Row update error', err)}
-      density="compact"
-      slots={{ toolbar: GridToolbar }}
-      loading={Boolean(loading)}
-      sx={{
-        width: '100%',
-        maxWidth: '100%',
-        height: '100%',
-        '& .MuiDataGrid-row:nth-of-type(even)': {
-          backgroundColor: 'var(--table-alt-row-bg)',
-        },
-        '& .MuiDataGrid-row:hover': {
-          backgroundColor: 'action.hover',
-        },
-        '& .MuiDataGrid-row.Mui-selected': {
-          backgroundColor: 'action.selected',
-          '&:hover': { backgroundColor: 'action.selected' },
-        },
-      }}
-    />
+    <React.Fragment>
+      <DataGrid<ServiceProvider>
+        rows={data}
+        columns={columns}
+        getRowId={(r)=>r.id}
+        paginationModel={paginationModel}
+        onPaginationModelChange={setPaginationModel}
+        pageSizeOptions={[25,10,50]}
+        disableRowSelectionOnClick
+        checkboxSelection
+        editMode="row"
+        processRowUpdate={processRowUpdate}
+        onProcessRowUpdateError={(err: unknown)=>console.error('Row update error', err)}
+        density="compact"
+        slots={{ toolbar: GridToolbar, footer: CustomGridFooter }}
+        loading={Boolean(loading)}
+        autoHeight={autoHeight}
+        sx={{
+          width: '100%',
+          maxWidth: '100%',
+          // Only enforce full height when not autoHeight
+          height: autoHeight ? 'auto' : '100%',
+          '& .MuiDataGrid-columnHeaders': {
+            zIndex: 2,
+          },
+          '& .MuiDataGrid-row:nth-of-type(even)': {
+            backgroundColor: 'var(--table-alt-row-bg)',
+          },
+          '& .MuiDataGrid-row:hover': {
+            backgroundColor: 'action.hover',
+          },
+          '& .MuiDataGrid-row.Mui-selected': {
+            backgroundColor: 'action.selected',
+            '&:hover': { backgroundColor: 'action.selected' },
+          },
+          // Keep default wrapping behavior for responsiveness
+        }}
+      />
+    </React.Fragment>
   );
 }

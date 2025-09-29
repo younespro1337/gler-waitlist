@@ -28,7 +28,7 @@ export default function WaitlistHeader({
   return (
     <Box
       sx={{
-        mb: 2,
+        mb: 1,
         display: 'grid',
         gridTemplateColumns: { xs: '1fr', md: '1fr auto' },
         alignItems: 'center',
@@ -72,4 +72,3 @@ export default function WaitlistHeader({
     </Box>
   );
 }
-

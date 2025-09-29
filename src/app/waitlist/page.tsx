@@ -189,7 +189,7 @@ function WaitlistPageContent() {
 
 
 
-          <Box sx={{ flex: 1, minHeight: 0, overflow: 'hidden' }}>
+          <Box sx={{ flex: 1, minHeight: 0, overflow: 'auto' }}>
             <React.Suspense fallback={null}>
               <ServiceProvidersTable
                 rows={entityType === 'providers' ? rows : []}

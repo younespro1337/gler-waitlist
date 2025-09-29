@@ -41,7 +41,7 @@ export function Brand() {
 }
 
 const navItems = [
-  { label: 'Service Dashboard', href: '#' },
+  { label: 'Service Dashboard', href: '/' },
   { label: 'Finance Forecast', href: '#finance' },
   { label: 'Human Resources', href: '/waitlist' },
   { label: 'Users', href: '#users' },
