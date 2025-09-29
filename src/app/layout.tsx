@@ -4,6 +4,8 @@ import { Geist, Geist_Mono, Poppins } from "next/font/google";
 import AppThemeProvider from '@/components/providers/AppThemeProvider';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import AppHeader from '@/components/layout/AppHeader';
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -47,6 +49,8 @@ export default function RootLayout({
               }}
             >
               {children}
+              <Analytics />
+              <SpeedInsights />
             </main>
           </AppThemeProvider>
         </AppRouterCacheProvider>

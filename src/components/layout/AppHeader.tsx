@@ -17,6 +17,7 @@ import {
   ListItemIcon,
   ListItemText,
 } from '@mui/material';
+import type { Theme } from '@mui/system';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
@@ -82,17 +83,19 @@ export default function AppHeader() {
 
   return (
     <AppBar color="transparent" position="sticky" elevation={0}
-      sx={(theme) => ({
+      sx={{
         borderBottom: 1,
         borderColor: 'divider',
         backdropFilter: 'saturate(180%) blur(6px)',
         bgcolor: 'background.paper',
-        zIndex: theme.zIndex.appBar + 1,
+        zIndex: 1201,
         maxWidth: '100%',
         overflow: 'hidden',
-      })}>
+      }}>
         
       <Toolbar sx={{ gap: 2, minHeight: 72, maxWidth: '100%', overflow: 'hidden' }}>
+        {/* Brand at far left */}
+        {/* <Brand /> */}
 
         <Tabs
           value={currentIndex}
@@ -132,6 +135,24 @@ export default function AppHeader() {
             />
           </IconButton>
           <Box sx={{ display: { xs: 'none', sm: 'flex' }, flexDirection: 'column', alignItems: 'flex-start', ml: 1 }}>
+            {/* Name */}
+            <Box sx={{ width: 62, height: 16, display: 'flex', alignItems: 'center' }}>
+              <Typography
+                variant="caption"
+                sx={{
+                  fontFamily: 'Poppins, sans-serif',
+                  fontWeight: 400,
+                  fontStyle: 'normal',
+                  fontSize: '12px',
+                  lineHeight: '16px',
+                  letterSpacing: 0,
+                  color: '#324054',
+                }}
+              >
+                Max Smith
+              </Typography>
+            </Box>
+            {/* Location (keep default styling as requested) */}
             <Typography
               variant="caption"
               sx={{
@@ -141,21 +162,7 @@ export default function AppHeader() {
                 fontSize: '12px',
                 lineHeight: '14px',
                 letterSpacing: 0,
-                color: 'var(--neutral-300)'
-              }}
-            >
-              Max Smith
-            </Typography>
-            <Typography
-              variant="caption"
-              sx={{
-                fontFamily: 'Poppins, sans-serif',
-                fontWeight: 400,
-                fontStyle: 'normal',
-                fontSize: '12px',
-                lineHeight: '14px',
-                letterSpacing: 0,
-                color: 'var(--neutral-300)'
+                color: 'text.secondary',
               }}
             >
               London, UK

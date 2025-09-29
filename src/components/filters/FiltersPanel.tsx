@@ -1,6 +1,7 @@
 'use client';
 import * as React from 'react';
 import { Box, Paper, Stack, TextField, FormGroup, FormControlLabel, Checkbox, Button, Divider, Typography, InputAdornment } from '@mui/material';
+import type { Theme } from '@mui/system';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import { Brand } from '@/components/layout/AppHeader';
 
@@ -34,7 +35,33 @@ export default function FiltersPanel({ value, onChange, onReset }:{
       <Box sx={{ mb: 2 }}>
         <Brand />
       </Box>
-      <Typography variant="subtitle2" sx={{ mb:1 }}>User Management</Typography>
+      <Box
+        sx={{
+          mb: 2,
+          width: 256,
+          height: 36,
+          px: 2,
+          py: 1,
+          borderRadius: 2,
+          bgcolor: '#D3D8DD',
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 1.25,
+        }}
+      >
+        <Typography
+          sx={{
+            fontFamily: 'Poppins, sans-serif',
+            fontWeight: 700,
+            fontSize: 16,
+            lineHeight: '20px',
+            color: '#000000',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          User Management
+        </Typography>
+      </Box>
 
       <TextField label="Postcode" size="small" fullWidth
         value={value.postcode} onChange={e=>onChange({ ...value, postcode: e.target.value })} sx={{ mb:2 }} />

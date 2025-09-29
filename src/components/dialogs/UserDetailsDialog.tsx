@@ -77,19 +77,19 @@ export default function UserDetailsDialog({
             <Box>
               <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1 }}>Contact Information</Typography>
               <Stack spacing={1.2}>
-                <Stack direction="row" alignItems="center" spacing={1.2}>
+                <Stack direction="row" spacing={1.2} sx={{ alignItems: 'center' }}>
                   <EmailOutlinedIcon fontSize="small" />
                   <Typography variant="body2">{user.email}</Typography>
                 </Stack>
-                <Stack direction="row" alignItems="center" spacing={1.2}>
+                <Stack direction="row" spacing={1.2} sx={{ alignItems: 'center' }}>
                   <PhoneOutlinedIcon fontSize="small" />
                   <Typography variant="body2">{user.phone}</Typography>
                 </Stack>
-                <Stack direction="row" alignItems="center" spacing={1.2}>
+                <Stack direction="row" spacing={1.2} sx={{ alignItems: 'center' }}>
                   <PublicOutlinedIcon fontSize="small" />
                   <Typography variant="body2">United Kingdom</Typography>
                 </Stack>
-                <Stack direction="row" alignItems="center" spacing={1.2}>
+                <Stack direction="row" spacing={1.2} sx={{ alignItems: 'center' }}>
                   <CalendarMonthOutlinedIcon fontSize="small" />
                   <Typography variant="body2">Signed up {dayjs(user.signupDate).format('D/M/YYYY')}</Typography>
                 </Stack>
@@ -101,7 +101,7 @@ export default function UserDetailsDialog({
             {/* Customer Details */}
             <Box>
               <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1 }}>Customer Details</Typography>
-              <Stack direction="row" alignItems="center" spacing={1.2}>
+              <Stack direction="row" spacing={1.2} sx={{ alignItems: 'center' }}>
                 <PersonOutlineIcon fontSize="small" />
                 <Typography variant="body2">{user.vendorType === 'Independent' ? 'individual' : 'company'}</Typography>
               </Stack>
@@ -110,14 +110,14 @@ export default function UserDetailsDialog({
             {/* User Details */}
             <Box>
               <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 1 }}>User Details</Typography>
-              <Stack direction="row" spacing={1} flexWrap="wrap">
+              <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap' }}>
                 <Chip size="small" variant="outlined" label={user.serviceOffering} />
               </Stack>
             </Box>
 
             {/* Internal Notes */}
             <Box>
-              <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 1 }}>
+              <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
                 <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>Internal Notes</Typography>
                 <IconButton size="small" aria-label="edit-notes" onClick={()=>console.log('Edit internal notes', user.id)}>
                   <EditOutlinedIcon fontSize="small" />

@@ -1,6 +1,6 @@
 'use client';
 import * as React from 'react';
-import { Container, Box, LinearProgress } from '@mui/material';
+import { Container, Box, LinearProgress, Alert, Button } from '@mui/material';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { api } from '@/lib/axios';
 import { ServiceProvider } from '@/lib/types';
@@ -10,6 +10,7 @@ const ServiceProvidersTable = React.lazy(() => import('@/components/table/Servic
 import UserDetailsDialog from '@/components/dialogs/UserDetailsDialog';
 import WaitlistHeader from '@/components/waitlist/WaitlistHeader';
 // Brand now rendered inside FiltersPanel to be part of the sidebar
+import ComingSoon from '@/components/common/ComingSoon';
 
 function WaitlistPageContent() {
   const router = useRouter();
@@ -21,13 +22,58 @@ function WaitlistPageContent() {
   const [searchInput, setSearchInput] = React.useState('');
   const [search, setSearch] = React.useState(''); // debounced value
   const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
   const [entityType, setEntityType] = React.useState<'providers' | 'customers'>('providers');
   const [tableLoading, setTableLoading] = React.useState(false);
   const [isPending, startTransition] = React.useTransition();
+  const [resetSignal, setResetSignal] = React.useState(0);
+  const [initialPageSize, setInitialPageSize] = React.useState<number>(25);
+
+  // Initialize from URL params
+  React.useEffect(() => {
+    const sp = searchParams;
+    if (!sp) return;
+    const q = sp.get('q') ?? '';
+    const postcode = sp.get('postcode') ?? '';
+    const status = (sp.get('status') ?? '').split(',').filter(Boolean);
+    const vendor = (sp.get('vendor') ?? '').split(',').filter(Boolean);
+    const offering = (sp.get('offering') ?? '').split(',').filter(Boolean);
+    const dateFrom = sp.get('from');
+    const dateTo = sp.get('to');
+    const ps = parseInt(sp.get('pageSize') || '', 10);
+    if (!Number.isNaN(ps) && (ps === 10 || ps === 25 || ps === 50)) setInitialPageSize(ps);
+
+    setSearchInput(q);
+    setFilters((f) => ({
+      ...f,
+      postcode,
+      status: { onboarded: status.includes('onboarded'), rejected: status.includes('rejected') },
+      vendor: { independent: vendor.includes('independent'), company: vendor.includes('company') },
+      offering: {
+        housekeeping: offering.includes('housekeeping'),
+        windowCleaning: offering.includes('windowCleaning') || offering.includes('windowcleaning'),
+        carValet: offering.includes('carValet') || offering.includes('carvalet'),
+      },
+      dateFrom: dateFrom || null,
+      dateTo: dateTo || null,
+    }));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const replaceURL = React.useCallback((patch: Partial<Record<string, string | null>>) => {
+    const params = new URLSearchParams(searchParams?.toString());
+    Object.entries(patch).forEach(([k, v]) => {
+      if (v === null || v === undefined || v === '') params.delete(k);
+      else params.set(k, String(v));
+    });
+    const qs = params.toString();
+    router.replace(qs ? `?${qs}` : '?', { scroll: false });
+  }, [router, searchParams]);
 
   React.useEffect(() => {
     let active = true;
     setLoading(true);
+    setError(null);
     api.get('/api/service-providers')
       .then(res => {
         if (!active) return;
@@ -41,6 +87,7 @@ function WaitlistPageContent() {
         setAllRowsIdx(indexed);
         setRows(res.data.data);
       })
+      .catch((e) => { if (active) setError(e?.message || 'Failed to load data'); })
       .finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
   }, []);
@@ -94,6 +141,31 @@ function WaitlistPageContent() {
       setTableLoading(false);
     });
   }, [allRowsIdx, filters, search, loading]);
+
+  // Sync filters + search to URL and reset page when they change
+  React.useEffect(() => {
+    const status: string[] = [];
+    if (filters.status.onboarded) status.push('onboarded');
+    if (filters.status.rejected) status.push('rejected');
+    const vendor: string[] = [];
+    if (filters.vendor.independent) vendor.push('independent');
+    if (filters.vendor.company) vendor.push('company');
+    const offering: string[] = [];
+    if (filters.offering.housekeeping) offering.push('housekeeping');
+    if (filters.offering.windowCleaning) offering.push('windowCleaning');
+    if (filters.offering.carValet) offering.push('carValet');
+
+    replaceURL({
+      q: search,
+      postcode: filters.postcode || null,
+      status: status.length ? status.join(',') : null,
+      vendor: vendor.length ? vendor.join(',') : null,
+      offering: offering.length ? offering.join(',') : null,
+      from: filters.dateFrom || null,
+      to: filters.dateTo || null,
+    });
+    setResetSignal((s) => s + 1);
+  }, [filters, search, replaceURL]);
 
   return (
     <Container maxWidth="xl" sx={{ pt: 2, pb: 1, height: '100%', display: 'flex', flexDirection: 'column', minHeight: 0 }}>
@@ -190,21 +262,39 @@ function WaitlistPageContent() {
 
 
           <Box sx={{ flex: 1, minHeight: 0, overflow: 'auto' }}>
-            <React.Suspense fallback={null}>
-              <ServiceProvidersTable
-                rows={entityType === 'providers' ? rows : []}
-                loading={loading || tableLoading || isPending}
-                onOpenDetails={(id)=>{
-                  const params = new URLSearchParams(searchParams?.toString());
-                  params.set('userId', id);
-                  router.replace(`?${params.toString()}`, { scroll: false });
-                }}
+            {entityType === 'customers' ? (
+              <ComingSoon
+                title="Customers"
+                message="This page is not provided in the Figma yet. A placeholder is shown for demonstration."
               />
-            </React.Suspense>
+            ) : (
+              <React.Suspense fallback={null}>
+                <ServiceProvidersTable
+                  rows={rows}
+                  loading={loading || tableLoading || isPending}
+                  initialPageSize={initialPageSize}
+                  resetPaginationSignal={resetSignal}
+                  onPaginationChange={(page, pageSize) => {
+                    replaceURL({ page: String(page), pageSize: String(pageSize) });
+                  }}
+                  onOpenDetails={(id)=>{
+                    const params = new URLSearchParams(searchParams?.toString());
+                    params.set('userId', id);
+                    router.replace(`?${params.toString()}`, { scroll: false });
+                  }}
+                />
+              </React.Suspense>
+            )}
           </Box>
         </Box>
       </Box>
       {/* User Details dialog controlled by URL param */}
+      {error && (
+        <Alert severity="error" sx={{ mt: 1 }}
+          action={<Button color="inherit" size="small" onClick={()=>window.location.reload()}>Retry</Button>}>
+          {error}
+        </Alert>
+      )}
       <UserDetailsDialog
         open={Boolean(searchParams?.get('userId'))}
         user={rows.find(r => r.id === searchParams?.get('userId'))}

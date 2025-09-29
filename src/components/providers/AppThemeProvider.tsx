@@ -1,6 +1,6 @@
 'use client';
 import * as React from 'react';
-import { ThemeProvider, CssBaseline, createTheme, GlobalStyles } from '@mui/material';
+import { ThemeProvider, CssBaseline, GlobalStyles, createTheme } from '@mui/material';
 import type {} from '@mui/x-data-grid/themeAugmentation';
 
 const theme = createTheme({
@@ -9,10 +9,15 @@ const theme = createTheme({
     primary: { main: '#2F80ED' },
     secondary: { main: '#6C5CE7' },
   },
+  // custom brand tokens (typed via theme augmentation)
+  gler: {
+    userName: '#324054',
+    userManagementBg: '#D3D8DD',
+    userManagementText: '#000000',
+  },
   typography: {
     fontFamily: 'Poppins, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, \"Apple Color Emoji\", \"Segoe UI Emoji\"',
   },
-  shape: { borderRadius: 8 },
   components: {
     MuiButton: {
       styleOverrides: {
@@ -26,11 +31,6 @@ const theme = createTheme({
       },
     },
     MuiPaper: {
-      styleOverrides: {
-        root: { borderRadius: 8 },
-      },
-    },
-    MuiDataGrid: {
       styleOverrides: {
         root: { borderRadius: 8 },
       },
@@ -62,14 +62,17 @@ export default function AppThemeProvider({ children }: { children: React.ReactNo
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <GlobalStyles styles={(theme) => ({
+      <GlobalStyles styles={{
         ':root': {
           '--sidebar-bg': '#F4F7F9',
           '--toggle-selected-bg': '#C8D5D9',
           '--table-alt-row-bg': '#EAEEF3',
-          '--neutral-300': theme.palette.grey[500],
+          '--neutral-300': '#9e9e9e',
+          '--gler-user-name': '#324054',
+          '--gler-um-bg': '#D3D8DD',
+          '--gler-um-text': '#000000',
         },
-      })} />
+      }} />
       {children}
     </ThemeProvider>
   );

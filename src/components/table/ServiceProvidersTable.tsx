@@ -10,9 +10,23 @@ import CustomGridFooter from '@/components/table/CustomGridFooter';
 const statusColor = (s: ServiceProvider['status']) =>
   s === 'Onboarded' ? 'success' : s === 'Rejected' ? 'error' : 'default';
 
-export default function ServiceProvidersTable({ rows, onOpenDetails, loading }:{ rows: ServiceProvider[]; onOpenDetails?: (id: string)=>void; loading?: boolean }) {
+export default function ServiceProvidersTable({
+  rows,
+  onOpenDetails,
+  loading,
+  initialPageSize = 25,
+  resetPaginationSignal,
+  onPaginationChange,
+}:{
+  rows: ServiceProvider[];
+  onOpenDetails?: (id: string)=>void;
+  loading?: boolean;
+  initialPageSize?: number;
+  resetPaginationSignal?: number;
+  onPaginationChange?: (page: number, pageSize: number) => void;
+}) {
   const [data, setData] = React.useState<ServiceProvider[]>(rows);
-  const [paginationModel, setPaginationModel] = React.useState<{ page: number; pageSize: number }>({ page: 0, pageSize: 25 });
+  const [paginationModel, setPaginationModel] = React.useState<{ page: number; pageSize: number }>({ page: 0, pageSize: initialPageSize });
 
   React.useEffect(() => { setData(rows); }, [rows]);
 
@@ -81,6 +95,25 @@ export default function ServiceProvidersTable({ rows, onOpenDetails, loading }:{
       setPaginationModel((pm) => ({ ...pm, page: totalPages - 1 }));
     }
   }, [data.length, paginationModel.pageSize, paginationModel.page]);
+
+  // Reset page to 0 when asked by parent
+  React.useEffect(() => {
+    if (resetPaginationSignal !== undefined) {
+      setPaginationModel((pm) => ({ ...pm, page: 0 }));
+    }
+  }, [resetPaginationSignal]);
+
+  // Respond to initialPageSize changes (e.g., URL param)
+  React.useEffect(() => {
+    if (initialPageSize && initialPageSize !== paginationModel.pageSize) {
+      setPaginationModel({ page: 0, pageSize: initialPageSize });
+    }
+  }, [initialPageSize]);
+
+  // Notify parent so it can sync URL
+  React.useEffect(() => {
+    onPaginationChange?.(paginationModel.page, paginationModel.pageSize);
+  }, [paginationModel.page, paginationModel.pageSize, onPaginationChange]);
 
   const autoHeight = paginationModel.pageSize === 10;
 

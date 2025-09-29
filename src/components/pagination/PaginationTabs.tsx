@@ -3,6 +3,8 @@ import * as React from 'react';
 import { Box, Button, IconButton } from '@mui/material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import FirstPageIcon from '@mui/icons-material/FirstPage';
+import LastPageIcon from '@mui/icons-material/LastPage';
 
 export interface PaginationTabsProps {
   page: number; // zero-based
@@ -10,6 +12,7 @@ export interface PaginationTabsProps {
   rowsPerPage: number;
   onPageChange: (page: number) => void; // zero-based
   maxButtons?: number; // how many numbered buttons to show at once
+  showFirstLast?: boolean;
 }
 
 export default function PaginationTabs({
@@ -18,6 +21,7 @@ export default function PaginationTabs({
   rowsPerPage,
   onPageChange,
   maxButtons = 5,
+  showFirstLast = true,
 }: PaginationTabsProps) {
   const totalPages = Math.max(1, Math.ceil((totalItems || 0) / (rowsPerPage || 1)));
   const current = Math.min(Math.max(0, page), totalPages - 1);
@@ -47,6 +51,17 @@ export default function PaginationTabs({
         flexWrap: 'wrap',
       }}
     >
+      {showFirstLast && (
+        <IconButton
+          size="small"
+          aria-label="first page"
+          onClick={() => go(1)}
+          disabled={current <= 0}
+          sx={{ border: 1, borderColor: 'divider', borderRadius: 1, width: 30, height: 26, p: 0 }}
+        >
+          <FirstPageIcon fontSize="small" />
+        </IconButton>
+      )}
       <IconButton
         size="small"
         aria-label="previous page"
@@ -90,6 +105,17 @@ export default function PaginationTabs({
       >
         <ChevronRightIcon fontSize="small" />
       </IconButton>
+      {showFirstLast && (
+        <IconButton
+          size="small"
+          aria-label="last page"
+          onClick={() => go(totalPages)}
+          disabled={current >= totalPages - 1}
+          sx={{ border: 1, borderColor: 'divider', borderRadius: 1, width: 30, height: 26, p: 0 }}
+        >
+          <LastPageIcon fontSize="small" />
+        </IconButton>
+      )}
     </Box>
   );
 }

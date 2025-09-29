@@ -42,6 +42,7 @@ export default function CustomGridFooter(rest: HTMLAttributes<HTMLDivElement>) {
           totalItems={total}
           rowsPerPage={pageSize}
           onPageChange={(p) => apiRef.current.setPage(p)}
+          showFirstLast
         />
       </Box>
 
