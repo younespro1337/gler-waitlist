@@ -108,7 +108,7 @@ export default function ServiceProvidersTable({
     if (initialPageSize && initialPageSize !== paginationModel.pageSize) {
       setPaginationModel({ page: 0, pageSize: initialPageSize });
     }
-  }, [initialPageSize]);
+  }, [initialPageSize, paginationModel.pageSize]);
 
   // Notify parent so it can sync URL
   React.useEffect(() => {

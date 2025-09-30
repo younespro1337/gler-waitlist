@@ -61,7 +61,7 @@ function WaitlistPageContent() {
   }, []);
 
   const replaceURL = React.useCallback((patch: Partial<Record<string, string | null>>) => {
-    const current = typeof window !== 'undefined' ? window.location.search : (searchParams?.toString() ? `?${searchParams!.toString()}` : '');
+    const current = typeof window !== 'undefined' ? window.location.search : '';
     const params = new URLSearchParams(current);
     Object.entries(patch).forEach(([k, v]) => {
       if (v === null || v === undefined || v === '') params.delete(k);
@@ -175,11 +175,11 @@ function WaitlistPageContent() {
   }, [filters, search]);
 
   return (
-    <Container maxWidth={false} sx={{ pt: 2, pb: 1, height: '100%', display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+    <Container maxWidth="xl" sx={{  pt: 2, pb: 1, height: '100%', display: 'flex', flexDirection: 'column', minHeight: 0 , "@media (min-width: 1800px)": { maxWidth: "100% !important" } }}>
       <Box
         sx={{
           display: 'grid',
-          gridTemplateColumns: { xs: '1fr', md: '1fr minmax(260px,320px)' },
+          gridTemplateColumns: { xs: '1fr', md: 'minmax(260px,320px) 1fr' },
           gap: 2,
           width: '100%',
           height: 1,
@@ -187,7 +187,7 @@ function WaitlistPageContent() {
           overflow: 'hidden',
         }}
       >
-        <Box sx={{ minHeight: 0, height: 1, display: 'flex', flexDirection: 'column', gap: 2, overflow: 'hidden', bgcolor: '#F4F7F9', gridColumn: { md: 2 } }}>
+        <Box sx={{ minHeight: 0, height: 1, display: 'flex', flexDirection: 'column', gap: 2, overflow: 'hidden', bgcolor: '#F4F7F9' }}>
           <Box sx={{ minHeight: 0, overflowY: 'auto', pr: 0.5 }}>
             <FiltersPanel
               value={filters}
@@ -196,7 +196,7 @@ function WaitlistPageContent() {
             />
           </Box>
         </Box>
-        <Box sx={{ minWidth: 0, overflow: 'hidden', height: 1, display: 'flex', flexDirection: 'column', minHeight: 0, gridColumn: { md: 1 } }}>
+        <Box sx={{ minWidth: 0, overflow: 'hidden', height: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
           <WaitlistHeader
             title="Waitlist"
             entityType={entityType}
@@ -322,3 +322,4 @@ export default function WaitlistPage() {
     </React.Suspense>
   );
 }
+

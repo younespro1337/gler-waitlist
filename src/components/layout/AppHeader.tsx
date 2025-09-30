@@ -17,7 +17,6 @@ import {
   ListItemIcon,
   ListItemText,
 } from '@mui/material';
-import type { Theme } from '@mui/system';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';

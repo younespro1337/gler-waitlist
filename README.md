@@ -1,165 +1,104 @@
-GLER Waitlist Dashboard ó Frontend Developer Assessment
-=======================================================
+GLER Waitlist Dashboard
+=======================
 
-A clean, responsive Waitlist dashboard built with Next.js + Material UI. It matches the provided Figma brief with a left filter stack and a DataGrid table for Service Providers, plus client-side search, filtering, and pagination. A small Customers placeholder is included (not provided in the Figma).
+A simple, friendly dashboard to explore and manage a list of service providers. It follows the provided design and works well on laptops, tablets, and phones.
 
 Screenshots
 -----------
 
 Home
 
-![Home](public/Home.png)
+![Home](public/Home.png "fdndn")
 
 Waitlist
 
 ![Waitlist](public/Waitlist.png)
 
-Non-Technical Setup (2ñ5 minutes)
-----------------------------------
+What You Can Do (Non‚Äëtechnical)
+--------------------------------
 
-Option A ó Run locally
+- Browse a list of providers with clean columns for Email, Phone, Postcode, Vendor Type, Service Offering, Signup Date and Status.
+- Search by email, phone or postcode and filter by status, vendor type, offering and date range.
+- Change the number of rows shown per page (10, 25, or 50). At 10 rows the table grows to fit, so you don‚Äôt need to scroll; 25/50 use a scroll for faster performance.
+- Move between pages using the simple arrow‚Äëand‚Äënumbers pager.
+- Open the details dialog from the actions column (demo only).
+- Navigate using the header tabs. ‚ÄúService Dashboard‚Äù takes you to the home page.
 
-1) Install Node.js LTS
-- Go to https://nodejs.org and install ìLTSî (18 or 20).
-- After install, open ìTerminalî (macOS) or ìPowerShellî (Windows) and run: `node -v` ó it should print something like v20.x.
+Quick Start (For Reviewers)
+---------------------------
 
-2) Download this project
-- If you received a ZIP, unzip it to a simple folder like `C:\gler-waitlist` or `~/gler-waitlist`.
+Prerequisites
 
-3) Start the app
-- Open Terminal/PowerShell in the project folder and run:
+- Node.js 18.18+ (or 20+ recommended)
+
+Install and run
 
 ```
 npm install
 npm run dev
 ```
 
-- Open http://localhost:3000 in your browser, then go to http://localhost:3000/waitlist.
+Open `http://localhost:3000` (home) and `http://localhost:3000/waitlist` for the main dashboard.
 
-Option B ó One-click deploy to Vercel
+Tech Stack (At a Glance)
+------------------------
 
-- Create a free account at https://vercel.com (or log in).
-- Import this repo and click Deploy. The first build takes ~1ñ2 minutes.
-- Copy the live URL and share it.
+- Next.js App Router, React 19, TypeScript
+- Material UI (MUI) v7 + DataGrid for the table
+- Day.js for dates, Axios for HTTP, Faker for demo data
 
-Developer Setup
----------------
+How Data Works
+--------------
 
-Requirements
-- Node.js 18.18+ (or 20.x recommended)
+- The app exposes a demo API at `/api/service-providers` that returns seeded data generated with Faker (see `src/lib/seed.ts`).
+- The data is cached in memory for the process lifetime. Restarting the dev server recreates the dataset.
 
-Scripts
-- `npm run dev` ó start dev server
-- `npm run build` ó production build
-- `npm start` ó run the built app
-- `npm run preview` ó build + start
-- `npm run lint` ó run ESLint
+Key Features (Technical)
+------------------------
 
-Architecture
-------------
+- Fast client‚Äëside filtering with a single pass over a pre‚Äëindexed dataset (lowercased fields and date epochs).
+- Row‚Äëlevel editing with format validation for email, phone and postcode; controlled select fields for vendor/offering/status.
+- Controlled pagination model; custom compact footer with Figma‚Äëstyle numeric pager on the left and MUI‚Äôs rows‚Äëper‚Äëpage selector on the right.
+- Auto‚Äëheight at 10 rows to avoid scroll; internal virtual scroll at 25/50.
+- Responsive layout using CSS grid and MUI breakpoints; table header stays visible.
 
-- App Router (Next.js): single route at `/waitlist`, plus a mock API.
-- Client components for table/filters; API provides seeded data.
-- Axios fetch; client-side filtering/sorting/pagination for demo scale.
+Project Structure
+-----------------
 
-Key Files
----------
+- `src/app/waitlist/page.tsx` ‚Äî Assembles the page, loads data, applies filters.
+- `src/components/filters/FiltersPanel.tsx` ‚Äî Filter UI and state shape.
+- `src/components/waitlist/WaitlistHeader.tsx` ‚Äî Title, entity toggle, search input.
+- `src/components/table/ServiceProvidersTable.tsx` ‚Äî DataGrid with editing and pagination.
+- `src/components/table/CustomGridFooter.tsx` ‚Äî Footer hosting the pager and MUI selector.
+- `src/components/pagination/PaginationTabs.tsx` ‚Äî Reusable arrow + numbers pager.
+- `src/components/layout/AppHeader.tsx` ‚Äî Top navigation.
+- `src/app/api/service-providers/route.ts` ‚Äî In‚Äëmemory API endpoint.
+- `src/lib/seed.ts` ‚Äî Deterministic data generation.
 
-- `src/app/waitlist/page.tsx` ó page composition and data loading
-- `src/components/filters/FiltersPanel.tsx` ó filters UI and state
-- `src/components/waitlist/WaitlistHeader.tsx` ó title, entity toggle, search
-- `src/components/table/ServiceProvidersTable.tsx` ó DataGrid + editing + pagination
-- `src/components/table/CustomGridFooter.tsx` ó compact footer hosting pager + selector
-- `src/components/pagination/PaginationTabs.tsx` ó reusable pager
-- `src/components/layout/AppHeader.tsx` ó top navigation bar
-- `src/lib/seed.ts` ó deterministic data generator
-- `src/app/api/service-providers/route.ts` ó mock API route
+Available Scripts
+-----------------
 
-Features
---------
+- `npm run dev` ‚Äî start the dev server
+- `npm run build` ‚Äî create a production build
+- `npm start` ‚Äî run the production build
+- `npm run preview` ‚Äî build then start
+- `npm run lint` ‚Äî run ESLint
 
-- Filters: postcode, status, date range, vendor type, service offering
-- Debounced search; URL-synced filters/search/page size
-- DataGrid: compact, alternating rows, sticky header; 25 rows by default
-- Inline edit with validation (email/phone/postcode, select fields)
-- Pager: numeric tabs with First/Prev/Next/Last; MUI selector on the right
-- Loading/empty/error states (non-blocking)
-- Header: nav tabs and user area; location shown
+Using the App
+-------------
 
-Design Snapshot & DELTA
------------------------
+1. Go to `/waitlist`.
+2. Try the search bar or any combination of filters on the left.
+3. Edit a row: double‚Äëclick or use the row edit action; invalid formats are rejected.
+4. Change rows per page (10/25/50) and navigate with the numeric pager.
+5. Open a details dialog from the actions column (demo only).
 
-- Snapshot: ìFrontend Developer Assessment ñ Dashboard UI (Figma/PDF)î
-- DELTAs:
-  - Customers view is a placeholder (not provided in the Figma).
-  - Pager numeric tabs are on the left (selector on the right). If the design prefers right alignment, this can be toggled easily.
+Notes & Next Steps
+------------------
 
-API Contract (demo)
--------------------
-
-- Request: `GET /api/service-providers`
-  - For the demo, the API returns all seeded rows. The client applies filters/pagination.
-- Response shape
-
-```
-{
-  "data": ServiceProvider[]
-}
-```
-
-Where `ServiceProvider` is:
-
-```
-{
-  id: string;
-  email: string;
-  phone: string;
-  postcode: string;
-  vendorType: 'Independent' | 'Company';
-  serviceOffering: 'Housekeeping' | 'Window Cleaning' | 'Car Valet';
-  signupDate: string; // ISO
-  status: 'Onboarded' | 'Rejected' | 'Pending';
-}
-```
-
-Accessibility & Performance
----------------------------
-
-- Keyboard reachable and labeled MUI inputs by default
-- Focus states visible; compact density for data views
-- Vercel Analytics + Speed Insights are included for traffic/perf insight
-
-Troubleshooting (Windows)
--------------------------
-
-- If you see dev-only errors under `.next/static/development/_buildManifest.js.tmp.*`, do this:
-  1) Stop dev server
-  2) Delete the `.next` (and `build/`) folder
-  3) Re-run with `npm run dev`
-  4) If persistent, run `npm run preview` for a production check
-
-Submission Checklist (quick)
-----------------------------
-
-- Live link (Vercel) and GitHub repo in your email
-- Attach updated CV
-- Paste Design Snapshot and list DELTAs
-- Confirm: no console errors; main flows work (filters/search/pager/edit)
-
-Suggested Final Commit Message
-------------------------------
-
-```
-feat: finalize GLER Waitlist demo (Next.js + MUI)
-
-- Add filters, URL-synced search, and compact DataGrid
-- Implement numeric pager with first/last and MUI selector
-- Customers placeholder (not in Figma) and user header polish
-- Add Vercel Analytics + Speed Insights; improve README with screenshots
-- Fix Windows dev file race, build warnings, and TS/ESLint issues
-```
-
-License
--------
-
-Private assignment submission. Do not distribute without permission.
+- This is a front‚Äëend demo. Real apps would save edits to a backend.
+- Nice enhancements to consider:
+  - Ellipsis in the pager for very large page counts.
+  - Persist filters and pagination to the URL so the state is shareable.
+  - Server‚Äëside pagination when the dataset becomes large.
+  - Unit tests for filter logic and pager math.

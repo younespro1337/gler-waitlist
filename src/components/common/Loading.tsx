@@ -1,7 +1,6 @@
 'use client';
 import * as React from 'react';
 import { Backdrop, Box, CircularProgress, Typography } from '@mui/material';
-import type { Theme } from '@mui/system';
 
 export default function Loading({
   message = 'Loading... please wait',

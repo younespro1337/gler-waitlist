@@ -1,7 +1,6 @@
 'use client';
 import * as React from 'react';
 import { Box, Paper, Stack, TextField, FormGroup, FormControlLabel, Checkbox, Button, Divider, Typography, InputAdornment } from '@mui/material';
-import type { Theme } from '@mui/system';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import { Brand } from '@/components/layout/AppHeader';
 
