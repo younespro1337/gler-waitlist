@@ -61,14 +61,19 @@ function WaitlistPageContent() {
   }, []);
 
   const replaceURL = React.useCallback((patch: Partial<Record<string, string | null>>) => {
-    const params = new URLSearchParams(searchParams?.toString());
+    const current = typeof window !== 'undefined' ? window.location.search : (searchParams?.toString() ? `?${searchParams!.toString()}` : '');
+    const params = new URLSearchParams(current);
     Object.entries(patch).forEach(([k, v]) => {
       if (v === null || v === undefined || v === '') params.delete(k);
       else params.set(k, String(v));
     });
-    const qs = params.toString();
-    router.replace(qs ? `?${qs}` : '?', { scroll: false });
-  }, [router, searchParams]);
+    const nextQs = params.toString();
+    const nextUrl = nextQs ? `?${nextQs}` : '?';
+    const currentQs = current?.startsWith('?') ? current : (current ? `?${current}` : '');
+    if (nextUrl !== currentQs) {
+      router.replace(nextUrl, { scroll: false });
+    }
+  }, [router]);
 
   React.useEffect(() => {
     let active = true;
@@ -165,14 +170,16 @@ function WaitlistPageContent() {
       to: filters.dateTo || null,
     });
     setResetSignal((s) => s + 1);
-  }, [filters, search, replaceURL]);
+  // We intentionally omit replaceURL to avoid effect retriggers from searchParams identity changes
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters, search]);
 
   return (
-    <Container maxWidth="xl" sx={{ pt: 2, pb: 1, height: '100%', display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+    <Container maxWidth={false} sx={{ pt: 2, pb: 1, height: '100%', display: 'flex', flexDirection: 'column', minHeight: 0 }}>
       <Box
         sx={{
           display: 'grid',
-          gridTemplateColumns: { xs: '1fr', md: 'minmax(260px,320px) 1fr' },
+          gridTemplateColumns: { xs: '1fr', md: '1fr minmax(260px,320px)' },
           gap: 2,
           width: '100%',
           height: 1,
@@ -180,7 +187,7 @@ function WaitlistPageContent() {
           overflow: 'hidden',
         }}
       >
-        <Box sx={{ minHeight: 0, height: 1, display: 'flex', flexDirection: 'column', gap: 2, overflow: 'hidden', bgcolor: '#F4F7F9' }}>
+        <Box sx={{ minHeight: 0, height: 1, display: 'flex', flexDirection: 'column', gap: 2, overflow: 'hidden', bgcolor: '#F4F7F9', gridColumn: { md: 2 } }}>
           <Box sx={{ minHeight: 0, overflowY: 'auto', pr: 0.5 }}>
             <FiltersPanel
               value={filters}
@@ -189,7 +196,7 @@ function WaitlistPageContent() {
             />
           </Box>
         </Box>
-        <Box sx={{ minWidth: 0, overflow: 'hidden', height: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+        <Box sx={{ minWidth: 0, overflow: 'hidden', height: 1, display: 'flex', flexDirection: 'column', minHeight: 0, gridColumn: { md: 1 } }}>
           <WaitlistHeader
             title="Waitlist"
             entityType={entityType}
