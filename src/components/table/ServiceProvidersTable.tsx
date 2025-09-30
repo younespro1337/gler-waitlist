@@ -103,12 +103,13 @@ export default function ServiceProvidersTable({
     }
   }, [resetPaginationSignal]);
 
-  // Respond to initialPageSize changes (e.g., URL param)
+  // Respond only when initialPageSize prop changes (e.g., from URL on mount)
   React.useEffect(() => {
-    if (initialPageSize && initialPageSize !== paginationModel.pageSize) {
-      setPaginationModel({ page: 0, pageSize: initialPageSize });
-    }
-  }, [initialPageSize, paginationModel.pageSize]);
+    setPaginationModel((pm) => {
+      if (!initialPageSize || pm.pageSize === initialPageSize) return pm;
+      return { page: 0, pageSize: initialPageSize };
+    });
+  }, [initialPageSize]);
 
   // Notify parent so it can sync URL
   React.useEffect(() => {
@@ -125,7 +126,7 @@ export default function ServiceProvidersTable({
         getRowId={(r)=>r.id}
         paginationModel={paginationModel}
         onPaginationModelChange={setPaginationModel}
-        pageSizeOptions={[25,10,50]}
+        pageSizeOptions={[25,10,50,100,200]}
         disableRowSelectionOnClick
         checkboxSelection
         editMode="row"
